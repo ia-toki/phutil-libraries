@@ -9,11 +9,13 @@
 phutil_register_library_map(array(
   '__library_version__' => 2,
   'class' => array(
+    'CheckstyleLinter' => 'src/CheckstyleLinter.php',
     'JenkinsDiffEventListener' => 'src/JenkinsDiffEventListener.php',
     'JenkinsUnitEngine' => 'src/JenkinsUnitEngine.php',
   ),
   'function' => array(),
   'xmap' => array(
+    'CheckstyleLinter' => 'ArcanistFutureLinter',
     'JenkinsDiffEventListener' => 'PhutilEventListener',
     'JenkinsUnitEngine' => 'ArcanistUnitTestEngine',
   ),
