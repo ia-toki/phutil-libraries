@@ -3,7 +3,7 @@
 final class CheckstyleLinter extends ArcanistFutureLinter {
 
     private static $repo = '.ivy2/cache';
-
+    private static $conf = '../iatoki-commons/checkstyle/config.xml';
     private static $jars = array(
         'com.puppycrawl.tools/checkstyle/jars/checkstyle-6.1.jar',
         'antlr/antlr/jars/antlr-2.7.7.jar',
@@ -40,8 +40,7 @@ final class CheckstyleLinter extends ArcanistFutureLinter {
 
         $futures = array();
         foreach($paths as $path) {
-            $conf = self::getConf($path);
-            $futures[$path] = new ExecFuture($command . ' -c ' . $conf . ' ' . $path);
+            $futures[$path] = new ExecFuture($command . ' -c ' . self::$conf . ' ' . $path);
         }
 
         return $futures;
@@ -63,7 +62,7 @@ final class CheckstyleLinter extends ArcanistFutureLinter {
             '(?:column="(\d+)" )?' .
             'severity="(\S+)" ' .
             'message="([^"]*)" ' .
-            'source="com\.puppycrawl\.tools\.checkstyle\.checks\.(\S+)\.(\S+)Check"\/>$/';
+            'source="com\.puppycrawl\.tools\.checkstyle\.checks\.(\S+)Check"\/>$/';
 
         if (!preg_match($pattern, $line, $matches)) {
             return;
@@ -76,7 +75,6 @@ final class CheckstyleLinter extends ArcanistFutureLinter {
         if (!empty($matches[2]))
             $message->setChar($matches[2]);
         $message->setCode($matches[5]);
-        $message->setName($matches[6]);
         $message->setDescription(html_entity_decode($matches[4], ENT_QUOTES | ENT_HTML5));
         $message->setSeverity($matches[3]);
 
@@ -91,13 +89,5 @@ final class CheckstyleLinter extends ArcanistFutureLinter {
 
         $command .= ' com.puppycrawl.tools.checkstyle.Main -f xml';
         return $command;
-    }
-
-    private static function getConf($path) {
-        if (preg_match('/^app/', $path)) {
-            return '../iatoki-commons/checkstyle-configs/checkstyle-app.xml';
-        } else {
-            return '../iatoki-commons/checkstyle-configs/checkstyle-test.xml';
-        }
     }
 }
